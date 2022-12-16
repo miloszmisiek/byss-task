@@ -1,4 +1,4 @@
-export const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+export const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 export const getDaysInMonth = (date) => {
   return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
@@ -6,7 +6,7 @@ export const getDaysInMonth = (date) => {
 
 export const range = (start, end, step = 1) => {
   let output = [];
-  if (typeof end === "undefined") {
+  if (typeof end === 'undefined') {
     end = start;
     start = 0;
   }
@@ -29,7 +29,7 @@ export const splitToWeeks = (now, monthDays) => {
   const updatedDays =
     day > 0
       ? Array(day - 1)
-          .fill("")
+          .fill('')
           .concat(monthDays)
       : monthDays;
 
@@ -37,7 +37,7 @@ export const splitToWeeks = (now, monthDays) => {
     if (updatedDays.slice(i, i + size).length < size) {
       const slicedArray = updatedDays.slice(i, i + size);
       const leftSpace = size - slicedArray.length;
-      const newArray = slicedArray.concat(Array(leftSpace).fill(""));
+      const newArray = slicedArray.concat(Array(leftSpace).fill(''));
       arrays.push(newArray);
     } else {
       arrays.push(updatedDays.slice(i, i + size));

@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const EventElement = styled.div`
   display: flex;
@@ -10,5 +10,5 @@ export const EventElement = styled.div`
   font-size: 0.7rem;
   background-color: blue;
   color: white;
-  outline: ${(props) => (props.selected ? "1px solid red" : "undefined")};
+  outline: ${(props) => (props.selected ? '1px solid red' : 'undefined')};
 `;

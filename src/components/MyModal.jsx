@@ -1,6 +1,6 @@
-import React from "react";
-import Button from "react-bootstrap/Button";
-import Modal from "react-bootstrap/Modal";
+import React from 'react';
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
 
 function MyModal({ show, setShow, event, deleteEvent }) {
   const handleClose = () => setShow(false);
@@ -19,8 +19,7 @@ function MyModal({ show, setShow, event, deleteEvent }) {
           onClick={() => {
             handleClose();
             deleteEvent();
-          }}
-        >
+          }}>
           Delete
         </Button>
       </Modal.Footer>

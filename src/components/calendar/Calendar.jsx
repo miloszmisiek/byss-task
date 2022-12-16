@@ -1,28 +1,14 @@
-import React, { useState, useRef, useEffect } from "react";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import {
-  getDaysInMonth,
-  range,
-  sortWeekDays,
-  splitToWeeks,
-  weekDays,
-} from "../../utils/utils";
-import { DayCol, WeekRow } from "./styled";
-import { EventElement } from "../EventForm/styled";
+import React, { useState, useRef, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import { getDaysInMonth, range, sortWeekDays, splitToWeeks, weekDays } from '../../utils/utils';
+import { DayCol, WeekRow } from './styled';
+import { EventElement } from '../EventForm/styled';
 
 function Calendar(props) {
-  const {
-    events,
-    setEvents,
-    dragItem,
-    dragOverItem,
-    id,
-    setEdit,
-    selected,
-    setSelected,
-  } = props;
+  const { events, setEvents, dragItem, dragOverItem, id, setEdit, selected, setSelected } = props;
   const [now, setNow] = useState(new Date());
   const monthDays = range(1, getDaysInMonth(now) + 1);
   const weeks = splitToWeeks(now, monthDays);
@@ -58,10 +44,7 @@ function Calendar(props) {
   };
 
   const drag = (idx, e) => {
-    if (
-      selected.length &&
-      selected?.some((el) => el.target === e.target.innerHTML)
-    ) {
+    if (selected.length && selected?.some((el) => el.target === e.target.innerHTML)) {
       dragItem.current = selected;
     } else {
       dragItem.current = { idx, target: e.target.innerHTML };
@@ -101,17 +84,11 @@ function Calendar(props) {
       if (!selected.length) {
         setSelected((prev) => [...prev, { idx, target: e.target.innerHTML }]);
       }
-      if (
-        !selected?.some(
-          (el) => el.idx === idx && el.target === e.target.innerHTML
-        )
-      ) {
+      if (!selected?.some((el) => el.idx === idx && el.target === e.target.innerHTML)) {
         setSelected((prev) => [...prev, { idx, target: e.target.innerHTML }]);
       } else {
         setSelected((current) =>
-          current.filter(
-            (obj) => obj.idx !== idx && obj.target !== e.target.innerHTML
-          )
+          current.filter((obj) => obj.idx !== idx && obj.target !== e.target.innerHTML)
         );
       }
     }
@@ -127,13 +104,21 @@ function Calendar(props) {
   return (
     <Container>
       <Row>
-        <Col onClick={prevYear}>{"<<"}</Col>
-        <Col onClick={prevMonth}>{"<"}</Col>
-        <Col xs={5}>
-          {now.toLocaleString("en-us", { month: "long" })} {now.getFullYear()}
+        <Col onClick={prevYear}>
+          <FontAwesomeIcon icon="fas fa-angle-double-left" />
         </Col>
-        <Col onClick={nextMonth}>{">"}</Col>
-        <Col onClick={nextYear}>{">>"}</Col>
+        <Col onClick={prevMonth}>
+          <FontAwesomeIcon icon="fas fa-angle-left" />
+        </Col>
+        <Col xs={5}>
+          {now.toLocaleString('en-us', { month: 'long' })} {now.getFullYear()}
+        </Col>
+        <Col onClick={nextMonth}>
+          <FontAwesomeIcon icon="fas fa-angle-right" />
+        </Col>
+        <Col onClick={nextYear}>
+          <FontAwesomeIcon icon="fas fa-angle-double-right" />
+        </Col>
       </Row>
       <WeekRow>
         {weekDays.map((d) => (
@@ -146,27 +131,21 @@ function Calendar(props) {
             const y = now.getFullYear();
             const m = now.getMonth() + 1;
             const nowString =
-              d !== ""
-                ? y + "-" + m + "-" + d.toString().padStart(2, "0")
-                : undefined;
-            const evArr = events?.filter(
-              (ev) => ev.date === nowString && ev.id === id
-            );
+              d !== '' ? y + '-' + m + '-' + d.toString().padStart(2, '0') : undefined;
+            const evArr = events?.filter((ev) => ev.date === nowString && ev.id === id);
             return (
               <DayCol
                 onDragEnter={(e) => onDragEnter(nowString, e, id)}
                 onDragOver={(e) => e.preventDefault()}
                 onDragEnd={drop}
-                day={d}
-              >
+                day={d}>
                 {d}
                 {evArr?.map((ev) => (
                   <EventElement
                     onClick={(e) => handleClick(ev.evId, e)}
                     onDragStart={(e) => drag(ev.evId, e)}
                     draggable
-                    selected={selected?.some((el) => el.idx === ev.evId)}
-                  >
+                    selected={selected?.some((el) => el.idx === ev.evId)}>
                     {ev.title}
                   </EventElement>
                 ))}
