@@ -1,12 +1,13 @@
-import Col from "react-bootstrap/esm/Col";
-import Row from "react-bootstrap/esm/Row";
 import styled from "styled-components";
 
-export const WeekRow = styled(Row)`
-  flex-wrap: nowrap;
-`;
-
-export const DayCol = styled(Col)`
-  
-  height: 120px;
+export const EventElement = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  outline: 1px solid blue;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  background-color: blue;
+  color: white;
 `;

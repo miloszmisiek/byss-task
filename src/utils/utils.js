@@ -22,18 +22,26 @@ export const sortWeekDays = (date) => {
   return [...weekDays.slice(day - 1), ...weekDays.slice(0, day - 1)];
 };
 
-export const splitToWeeks = (monthDays) => {
+export const splitToWeeks = (now, monthDays) => {
+  const day = new Date(now.getFullYear(), now.getMonth(), 1).getDay();
   let arrays = [];
   const size = 7;
 
-  for (let i = 0; i < monthDays.length; i += size) {
-    if (monthDays.slice(i, i + size).length < size) {
-      const slicedArray = monthDays.slice(i, i + size);
+  const updatedDays =
+    day > 0
+      ? Array(day - 1)
+          .fill("")
+          .concat(monthDays)
+      : monthDays;
+
+  for (let i = 0; i < updatedDays.length; i += size) {
+    if (updatedDays.slice(i, i + size).length < size) {
+      const slicedArray = updatedDays.slice(i, i + size);
       const leftSpace = size - slicedArray.length;
       const newArray = slicedArray.concat(Array(leftSpace).fill(""));
       arrays.push(newArray);
     } else {
-      arrays.push(monthDays.slice(i, i + size));
+      arrays.push(updatedDays.slice(i, i + size));
     }
   }
   return arrays;
