@@ -1,15 +1,48 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { EVENTS } from "../../mockup";
+import MyModal from "../MyModal";
+import CloseButton from "react-bootstrap/CloseButton";
 
-function EventForm({ events, setEvents }) {
-  const [eventData, setEventData] = useState({
+function EventForm({ events, setEvents, edit, setEdit }) {
+  const initialState = {
     title: "",
     date: new Date().toISOString().split("T")[0],
     description: "",
-  });
+  };
+  const [eventData, setEventData] = useState(initialState);
+  //   const [isEdit, setIsEdit] = useState(false);
+  const [show, setShow] = useState(false);
+  const handleShow = () => setShow(true);
   const { title, date, description } = eventData;
+  const updateEvent = () => {
+    setEvents((current) =>
+      current.map((obj) => {
+        if (obj.evId === edit) {
+          return {
+            ...obj,
+            title: title,
+            date: date,
+            description: description,
+          };
+        }
+        return obj;
+      })
+    );
+    setEdit(null);
+    // setIsEdit(false);
+  };
+  const deleteEvent = () => {
+    setEvents((current) =>
+      current.filter((obj) => {
+        return obj.evId !== edit;
+      })
+    );
+    setEdit(null);
+    // setIsEdit(false);
+    setEventData(initialState);
+  };
   const handleChange = (e) => {
     setEventData({
       ...eventData,
@@ -18,12 +51,43 @@ function EventForm({ events, setEvents }) {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    setEvents([...events, eventData]);
-    console.log(EVENTS);
+    edit === null
+      ? setEvents([...events, { ...eventData, id: 1, evId: events.length }])
+      : updateEvent();
+    setEventData(initialState);
   };
+  const closeEditForm = () => {
+    // setIsEdit(false);
+    setEdit(null);
+    setEventData(initialState);
+  };
+
+  useEffect(() => {
+    if (edit !== null) {
+      //   setIsEdit(true);
+      events.find((ev) => ev.evId === edit);
+      setEventData(events.find((ev) => ev.evId === edit));
+    }
+  }, [edit]);
   return (
     <div>
+      <MyModal
+        show={show}
+        setShow={setShow}
+        deleteEvent={deleteEvent}
+        event={edit !== null ? events.find((ev) => ev.evId === edit).title : ""}
+      />
       <Form onSubmit={handleSubmit}>
+        <div>
+          {edit !== null ? (
+            <>
+              {"Edit Event"}{" "}
+              <CloseButton onClick={closeEditForm} aria-label="Hide" />
+            </>
+          ) : (
+            "Add Event"
+          )}
+        </div>
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Event Title</Form.Label>
           <Form.Control
@@ -56,8 +120,13 @@ function EventForm({ events, setEvents }) {
           />
         </Form.Group>
         <Button variant="primary" type="submit">
-          Submit
+          {edit === null ? "Submit" : "Save"}
         </Button>
+        {edit !== null && (
+          <Button onClick={handleShow} variant="danger">
+            Delete
+          </Button>
+        )}
       </Form>
     </div>
   );

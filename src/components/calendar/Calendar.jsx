@@ -12,10 +12,17 @@ import {
 import { DayCol, WeekRow } from "./styled";
 import { EventElement } from "../EventForm/styled";
 
-function Calendar({ events, setEvents }) {
-  const dragItem = useRef();
-  const dragOverItem = useRef();
-  const [calendarEvents, setCalendarEvents] = useState([]);
+function Calendar(props) {
+  const {
+    events,
+    setEvents,
+    dragItem,
+    dragOverItem,
+    id,
+    setEdit,
+    selected,
+    setSelected,
+  } = props;
   const [now, setNow] = useState(new Date());
   const monthDays = range(1, getDaysInMonth(now) + 1);
   const weeks = splitToWeeks(now, monthDays);
@@ -51,33 +58,71 @@ function Calendar({ events, setEvents }) {
   };
 
   const drag = (idx, e) => {
-    dragItem.current = { idx, target: e.target };
+    if (
+      selected.length &&
+      selected?.some((el) => el.target === e.target.innerHTML)
+    ) {
+      dragItem.current = selected;
+    } else {
+      dragItem.current = { idx, target: e.target.innerHTML };
+    }
   };
 
-  const onDragEnter = (date, e) => {
+  const onDragEnter = (date, e, id) => {
     e.preventDefault();
-    dragOverItem.current = date;
+    dragOverItem.current = { date, id };
   };
 
   const drop = (e) => {
     e.preventDefault();
-    console.log(dragItem.current.idx, dragOverItem);
-
-    setCalendarEvents((prev) =>
+    setEvents((prev) =>
       prev.map((ev, idx) => {
-        if (idx === dragItem.current.idx) {
-          ev.date = dragOverItem.current;
+        if (dragItem.current.length) {
+          dragItem.current.forEach((itm) => {
+            if (ev.evId === itm.idx) {
+              ev.date = dragOverItem.current.date;
+              ev.id = dragOverItem.current.id;
+            }
+          });
         }
+        if (idx === dragItem.current.idx) {
+          ev.date = dragOverItem.current.date;
+          ev.id = dragOverItem.current.id;
+        }
+
+        setSelected([]);
         return ev;
       })
     );
   };
 
+  const handleClick = (idx, e) => {
+    if (e.detail === 1) {
+      if (!selected.length) {
+        setSelected((prev) => [...prev, { idx, target: e.target.innerHTML }]);
+      }
+      if (
+        !selected?.some(
+          (el) => el.idx === idx && el.target === e.target.innerHTML
+        )
+      ) {
+        setSelected((prev) => [...prev, { idx, target: e.target.innerHTML }]);
+      } else {
+        setSelected((current) =>
+          current.filter(
+            (obj) => obj.idx !== idx && obj.target !== e.target.innerHTML
+          )
+        );
+      }
+    }
+    if (e.detail === 2) {
+      setEdit(idx);
+    }
+  };
+
   useEffect(() => {
-    setCalendarEvents(events);
-    console.log(calendarEvents);
-    console.log(weeks);
-  }, [events]);
+    setEvents(events);
+  }, [events, selected]);
 
   return (
     <Container>
@@ -100,18 +145,28 @@ function Calendar({ events, setEvents }) {
           {w.map((d) => {
             const y = now.getFullYear();
             const m = now.getMonth() + 1;
-            const nowString = d !== "" ? y + "-" + m + "-" + d : undefined;
-            const evArr = events?.filter((ev) => ev.date === nowString);
+            const nowString =
+              d !== ""
+                ? y + "-" + m + "-" + d.toString().padStart(2, "0")
+                : undefined;
+            const evArr = events?.filter(
+              (ev) => ev.date === nowString && ev.id === id
+            );
             return (
               <DayCol
-                onDragEnter={(e) => onDragEnter(nowString, e)}
+                onDragEnter={(e) => onDragEnter(nowString, e, id)}
                 onDragOver={(e) => e.preventDefault()}
                 onDragEnd={drop}
                 day={d}
               >
                 {d}
-                {evArr?.map((ev, idx) => (
-                  <EventElement onDragStart={(e) => drag(idx, e)} draggable>
+                {evArr?.map((ev) => (
+                  <EventElement
+                    onClick={(e) => handleClick(ev.evId, e)}
+                    onDragStart={(e) => drag(ev.evId, e)}
+                    draggable
+                    selected={selected?.some((el) => el.idx === ev.evId)}
+                  >
                     {ev.title}
                   </EventElement>
                 ))}

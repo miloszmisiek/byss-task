@@ -18,7 +18,6 @@ export const range = (start, end, step = 1) => {
 
 export const sortWeekDays = (date) => {
   const day = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
-  console.log(day);
   return [...weekDays.slice(day - 1), ...weekDays.slice(0, day - 1)];
 };
 

@@ -10,4 +10,5 @@ export const EventElement = styled.div`
   font-size: 0.7rem;
   background-color: blue;
   color: white;
+  outline: ${(props) => (props.selected ? "1px solid red" : "undefined")};
 `;
