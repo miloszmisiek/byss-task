@@ -14,9 +14,9 @@ import {
   WeekRow,
   DayNames
 } from './styled';
-import { EventElement } from '../eventForm/styled';
 import EventWrapper from '../EventWrapper';
 import MyModal from '../myModal/MyModal';
+import { EventElement } from '../EventForm/styled';
 
 function Calendar(props) {
   const { events, setEvents, dragItem, dragOverItem, id, setEdit, selected, setSelected, edit } =
