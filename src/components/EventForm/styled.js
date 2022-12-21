@@ -21,16 +21,9 @@ export const EventElement = styled.div`
     props.selected && !props.animate
       ? 'rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset'
       : undefined};
-  /* outline: ${(props) =>
-    !props.selected
-      ? `1px solid ${props.color}`
-      : props.color === COLORS[0]
-      ? '1px solid black'
-      : '1px solid red'}; */
   border-radius: 4px;
   font-size: 0.7rem;
   background-color: ${(props) => props.color};
-  /* color: ${(props) => (props.color === COLORS[2] ? 'black' : 'white')}; */
   color: white;
   cursor: pointer;
   text-align: center;
