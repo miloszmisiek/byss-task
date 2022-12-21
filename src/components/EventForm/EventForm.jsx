@@ -77,7 +77,7 @@ function EventForm({ events, setEvents, edit, setEdit }) {
 
   return (
     <EventWrapper>
-      <Form noValidate validated={validated} onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit}>
         <FormHead>
           {edit !== null ? (
             <>
@@ -98,8 +98,8 @@ function EventForm({ events, setEvents, edit, setEdit }) {
             value={title}
             onChange={handleChange}
             required
+            maxLength={50}
           />
-          <Form.Control.Feedback type="invalid">Please choose a title.</Form.Control.Feedback>
         </Form.Group>
         <Form.Group className="mb-3" controlId="formBasicPassword">
           <Form.Label>Date</Form.Label>
@@ -111,7 +111,6 @@ function EventForm({ events, setEvents, edit, setEdit }) {
             onChange={handleChange}
             required
           />
-          <Form.Control.Feedback type="invalid">Please provide a valid date.</Form.Control.Feedback>
         </Form.Group>
         <Form.Group className="mb-3" controlId="eventTextArea">
           <Form.Label>Description</Form.Label>
@@ -122,6 +121,7 @@ function EventForm({ events, setEvents, edit, setEdit }) {
             placeholder="Type event description..."
             value={description}
             onChange={handleChange}
+            maxLength={500}
           />
         </Form.Group>
         <ColorsFieldset className="mb-3">
