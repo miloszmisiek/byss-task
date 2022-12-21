@@ -25,6 +25,7 @@ function EventForm({ events, setEvents, edit, setEdit }) {
   };
   const [eventData, setEventData] = useState(initialState);
   const { title, date, description, color } = eventData;
+  const [validated, setValidated] = useState(false);
   const updateEvent = () => {
     setEvents((current) =>
       current.map((obj) => {
@@ -50,7 +51,13 @@ function EventForm({ events, setEvents, edit, setEdit }) {
     });
   };
   const handleSubmit = (e) => {
+    const form = e.currentTarget;
     e.preventDefault();
+
+    if (form.checkValidity() === false) {
+      e.stopPropagation();
+    }
+    setValidated(true);
     edit === null
       ? setEvents([...events, { ...eventData, id: 0, evId: events.length }])
       : updateEvent();
@@ -70,7 +77,7 @@ function EventForm({ events, setEvents, edit, setEdit }) {
 
   return (
     <EventWrapper>
-      <Form onSubmit={handleSubmit}>
+      <Form noValidate validated={validated} onSubmit={handleSubmit}>
         <FormHead>
           {edit !== null ? (
             <>
@@ -92,6 +99,7 @@ function EventForm({ events, setEvents, edit, setEdit }) {
             onChange={handleChange}
             required
           />
+          <Form.Control.Feedback type="invalid">Please choose a title.</Form.Control.Feedback>
         </Form.Group>
         <Form.Group className="mb-3" controlId="formBasicPassword">
           <Form.Label>Date</Form.Label>
@@ -103,6 +111,7 @@ function EventForm({ events, setEvents, edit, setEdit }) {
             onChange={handleChange}
             required
           />
+          <Form.Control.Feedback type="invalid">Please provide a valid date.</Form.Control.Feedback>
         </Form.Group>
         <Form.Group className="mb-3" controlId="eventTextArea">
           <Form.Label>Description</Form.Label>
