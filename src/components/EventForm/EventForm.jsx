@@ -1,19 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import MyModal from '../MyModal';
 import CloseButton from 'react-bootstrap/CloseButton';
+import {
+  ColorBox,
+  ColorPicker,
+  ColorsFieldset,
+  ColorsLegend,
+  ColorsWrapper,
+  CPLabel,
+  EventButtons,
+  EventFormHr,
+  EventWrapper,
+  FormHead
+} from './styled';
+import { COLORS } from '../../const';
 
 function EventForm({ events, setEvents, edit, setEdit }) {
   const initialState = {
     title: '',
     date: new Date().toISOString().split('T')[0],
-    description: ''
+    description: '',
+    color: COLORS[0]
   };
   const [eventData, setEventData] = useState(initialState);
-  const [show, setShow] = useState(false);
-  const handleShow = () => setShow(true);
-  const { title, date, description } = eventData;
+  const { title, date, description, color } = eventData;
   const updateEvent = () => {
     setEvents((current) =>
       current.map((obj) => {
@@ -22,7 +33,8 @@ function EventForm({ events, setEvents, edit, setEdit }) {
             ...obj,
             title: title,
             date: date,
-            description: description
+            description: description,
+            color: color
           };
         }
         return obj;
@@ -30,15 +42,7 @@ function EventForm({ events, setEvents, edit, setEdit }) {
     );
     setEdit(null);
   };
-  const deleteEvent = () => {
-    setEvents((current) =>
-      current.filter((obj) => {
-        return obj.evId !== edit;
-      })
-    );
-    setEdit(null);
-    setEventData(initialState);
-  };
+
   const handleChange = (e) => {
     setEventData({
       ...eventData,
@@ -48,7 +52,7 @@ function EventForm({ events, setEvents, edit, setEdit }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     edit === null
-      ? setEvents([...events, { ...eventData, id: 1, evId: events.length }])
+      ? setEvents([...events, { ...eventData, id: 0, evId: events.length }])
       : updateEvent();
     setEventData(initialState);
   };
@@ -64,35 +68,30 @@ function EventForm({ events, setEvents, edit, setEdit }) {
   }, [edit]);
 
   return (
-    <div>
-      <MyModal
-        show={show}
-        setShow={setShow}
-        deleteEvent={deleteEvent}
-        event={edit !== null ? events.find((ev) => ev.evId === edit).title : ''}
-      />
+    <EventWrapper>
       <Form onSubmit={handleSubmit}>
-        <div>
+        <FormHead>
           {edit !== null ? (
             <>
-              {'Edit Event'} <CloseButton onClick={closeEditForm} aria-label="Hide" />
+              {'Edit Event'}
+              <CloseButton onClick={closeEditForm} variant="white" aria-label="Hide" />
             </>
           ) : (
             'Add Event'
           )}
-        </div>
+        </FormHead>
+        <EventFormHr />
         <Form.Group className="mb-3" controlId="formBasicEmail">
-          <Form.Label>Event Title</Form.Label>
+          <Form.Label>Title</Form.Label>
           <Form.Control
             type="text"
-            placeholder="Enter event title"
+            placeholder="Enter event title..."
             name="title"
             value={title}
             onChange={handleChange}
             required
           />
         </Form.Group>
-
         <Form.Group className="mb-3" controlId="formBasicPassword">
           <Form.Label>Date</Form.Label>
           <Form.Control
@@ -110,20 +109,39 @@ function EventForm({ events, setEvents, edit, setEdit }) {
             as="textarea"
             rows={4}
             name="description"
+            placeholder="Type event description..."
             value={description}
             onChange={handleChange}
           />
         </Form.Group>
-        <Button variant="primary" type="submit">
-          {edit === null ? 'Submit' : 'Save'}
-        </Button>
-        {edit !== null && (
-          <Button onClick={handleShow} variant="danger">
-            Delete
+        <ColorsFieldset className="mb-3">
+          <ColorsLegend as={Form.Label}>Color</ColorsLegend>
+          <ColorsWrapper>
+            {COLORS.map((c) => (
+              <React.Fragment key={c}>
+                <ColorPicker
+                  type="radio"
+                  name="color"
+                  id={c}
+                  value={c}
+                  checked={color === c}
+                  onChange={handleChange}
+                />
+                <CPLabel htmlFor={c}>
+                  <ColorBox color={c} />
+                </CPLabel>
+              </React.Fragment>
+            ))}
+          </ColorsWrapper>
+        </ColorsFieldset>
+        <EventFormHr />
+        <EventButtons>
+          <Button variant={edit !== null ? 'success' : 'primary'} type="submit">
+            {edit === null ? 'Submit' : 'Save'}
           </Button>
-        )}
+        </EventButtons>
       </Form>
-    </div>
+    </EventWrapper>
   );
 }
 

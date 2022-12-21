@@ -1,17 +1,33 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
+import React, { useState, useEffect, useRef } from 'react';
 import Col from 'react-bootstrap/Col';
-import { getDaysInMonth, range, sortWeekDays, splitToWeeks, weekDays } from '../../utils/utils';
-import { DayCol, WeekRow } from './styled';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Popover from 'react-bootstrap/Popover';
+import { getDaysInMonth, range, splitToWeeks, weekDays } from '../../utils/utils';
+import {
+  CalendarContainer,
+  CalendarIcon,
+  CalendarMonth,
+  CalendarTop,
+  DayCol,
+  PopperButtons,
+  PopperIcon,
+  WeekRow,
+  DayNames
+} from './styled';
 import { EventElement } from '../EventForm/styled';
+import EventWrapper from '../EventWrapper';
+import MyModal from '../myModal/MyModal';
 
 function Calendar(props) {
-  const { events, setEvents, dragItem, dragOverItem, id, setEdit, selected, setSelected } = props;
+  const { events, setEvents, dragItem, dragOverItem, id, setEdit, selected, setSelected, edit } =
+    props;
   const [now, setNow] = useState(new Date());
+  const [showPopover, setShowPopover] = useState(false);
+  const [show, setShow] = useState(false);
+  const handleShow = () => setShow(true);
   const monthDays = range(1, getDaysInMonth(now) + 1);
   const weeks = splitToWeeks(now, monthDays);
+  const deleteRef = useRef(null);
 
   const prevMonth = () => {
     const mon = now.getMonth();
@@ -42,20 +58,15 @@ function Calendar(props) {
     now.setFullYear(now.getFullYear() + 1);
     setNow(new Date(now));
   };
-
   const drag = (idx, e) => {
-    if (selected.length && selected?.some((el) => el.target === e.target.innerHTML)) {
-      dragItem.current = selected;
-    } else {
-      dragItem.current = { idx, target: e.target.innerHTML };
-    }
+    selected.length && selected?.some((el) => el.target === e.target.innerHTML)
+      ? (dragItem.current = selected)
+      : (dragItem.current = { idx, target: e.target.innerHTML });
   };
-
   const onDragEnter = (date, e, id) => {
     e.preventDefault();
     dragOverItem.current = { date, id };
   };
-
   const drop = (e) => {
     e.preventDefault();
     setEvents((prev) =>
@@ -72,62 +83,97 @@ function Calendar(props) {
           ev.date = dragOverItem.current.date;
           ev.id = dragOverItem.current.id;
         }
-
         setSelected([]);
         return ev;
       })
     );
   };
-
   const handleClick = (idx, e) => {
-    if (e.detail === 1) {
-      if (!selected.length) {
-        setSelected((prev) => [...prev, { idx, target: e.target.innerHTML }]);
-      }
-      if (!selected?.some((el) => el.idx === idx && el.target === e.target.innerHTML)) {
-        setSelected((prev) => [...prev, { idx, target: e.target.innerHTML }]);
-      } else {
-        setSelected((current) =>
-          current.filter((obj) => obj.idx !== idx && obj.target !== e.target.innerHTML)
-        );
-      }
-    }
     if (e.detail === 2) {
-      setEdit(idx);
+      setShowPopover(true);
     }
+    if (
+      showPopover &&
+      !selected?.some((el) => el.idx === idx && el.target === e.target.innerHTML)
+    ) {
+      setShowPopover(false);
+    }
+    !selected?.some((el) => el.idx === idx && el.target === e.target.innerHTML) &&
+    (e.metaKey || e.ctrlKey)
+      ? setSelected((prev) => [...prev, { idx, target: e.target.innerHTML }])
+      : setSelected([{ idx, target: e.target.innerHTML }]);
   };
-
+  const deleteEvent = (id) => {
+    setEvents((current) =>
+      current.filter((obj) => {
+        return obj.evId !== id;
+      })
+    );
+    setEdit(null);
+    setShowPopover(false);
+  };
   useEffect(() => {
     setEvents(events);
-  }, [events, selected]);
+  }, [events]);
 
+  const popover = (data, edit) => (
+    <Popover id="popover-basic">
+      <Popover.Header as="h3">
+        <strong>{data.title}</strong>
+      </Popover.Header>
+      <Popover.Body>
+        <strong>Date:</strong> {data.date}
+        <br />
+        <strong>Description:</strong> {data.description}
+        <br />
+        <PopperButtons>
+          <PopperIcon
+            icon="fas fa-edit"
+            edit="_"
+            onClick={() => {
+              edit(data.evId);
+              setShowPopover(false);
+            }}
+          />
+          <PopperIcon
+            ref={deleteRef}
+            className="fa-shake"
+            icon="fas fa-trash"
+            onClick={() => {
+              handleShow();
+            }}
+          />
+        </PopperButtons>
+      </Popover.Body>
+    </Popover>
+  );
   return (
-    <Container>
-      <Row>
+    <CalendarContainer>
+      <CalendarTop>
         <Col onClick={prevYear}>
-          <FontAwesomeIcon icon="fas fa-angle-double-left" />
+          <CalendarIcon icon="fas fa-angle-double-left" />
         </Col>
         <Col onClick={prevMonth}>
-          <FontAwesomeIcon icon="fas fa-angle-left" />
+          <CalendarIcon icon="fas fa-angle-left" />
         </Col>
-        <Col xs={5}>
+        <CalendarMonth xs={5}>
           {now.toLocaleString('en-us', { month: 'long' })} {now.getFullYear()}
-        </Col>
+        </CalendarMonth>
         <Col onClick={nextMonth}>
-          <FontAwesomeIcon icon="fas fa-angle-right" />
+          <CalendarIcon icon="fas fa-angle-right" />
         </Col>
         <Col onClick={nextYear}>
-          <FontAwesomeIcon icon="fas fa-angle-double-right" />
+          <CalendarIcon icon="fas fa-angle-double-right" />
         </Col>
-      </Row>
-      <WeekRow>
+      </CalendarTop>
+      <WeekRow head="true">
         {weekDays.map((d) => (
-          <Col>{d}</Col>
+          <DayNames key={d}>{d}</DayNames>
         ))}
       </WeekRow>
-      {weeks.map((w) => (
-        <WeekRow>
-          {w.map((d) => {
+      {weeks.map((w, i) => (
+        <WeekRow key={i}>
+          {w.map((d, i) => {
             const y = now.getFullYear();
             const m = now.getMonth() + 1;
             const nowString =
@@ -138,23 +184,51 @@ function Calendar(props) {
                 onDragEnter={(e) => onDragEnter(nowString, e, id)}
                 onDragOver={(e) => e.preventDefault()}
                 onDragEnd={drop}
-                day={d}>
+                day={d}
+                key={i}>
                 {d}
                 {evArr?.map((ev) => (
-                  <EventElement
-                    onClick={(e) => handleClick(ev.evId, e)}
-                    onDragStart={(e) => drag(ev.evId, e)}
-                    draggable
-                    selected={selected?.some((el) => el.idx === ev.evId)}>
-                    {ev.title}
-                  </EventElement>
+                  <EventWrapper
+                    setSelected={setSelected}
+                    selected={selected}
+                    showPopover={showPopover}
+                    setShowPopover={setShowPopover}
+                    edit={edit}
+                    deleteRef={deleteRef}
+                    key={ev.evId}>
+                    <MyModal
+                      show={show}
+                      setShow={setShow}
+                      setShowPopover={setShowPopover}
+                      deleteEvent={deleteEvent}
+                      event={events.find((ev) => ev.evId === ev.evId)}
+                    />
+                    <OverlayTrigger
+                      trigger="focus"
+                      rootClose
+                      show={selected?.some((el) => el.idx === ev.evId) && showPopover}
+                      placement="right"
+                      overlay={popover(ev, setEdit)}>
+                      <EventElement
+                        idx={ev.evId}
+                        color={ev.color}
+                        className="events"
+                        onClick={(e) => handleClick(ev.evId, e)}
+                        onDragStart={(e) => drag(ev.evId, e)}
+                        draggable
+                        selected={selected?.some((el) => el.idx === ev.evId)}
+                        animate={selected.length > 1}>
+                        {ev.title}
+                      </EventElement>
+                    </OverlayTrigger>
+                  </EventWrapper>
                 ))}
               </DayCol>
             );
           })}
         </WeekRow>
       ))}
-    </Container>
+    </CalendarContainer>
   );
 }
 
