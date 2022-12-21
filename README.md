@@ -13,6 +13,8 @@
   - [Calendar Actions](#calendar-actions)
   - [Edit Event](#edit-event)
   - [Drag and drop functionality (desktop only)](#drag-and-drop-functionality-desktop-only)
+- [**Bugs**](#bugs)
+  - [Desktop browser in mobile view - not showing popover](#desktop-browser-in-mobile-view---not-showing-popover)
 - [**Credits**](#credits)
 - [**Acknowledgments**](#acknowledgments)
 
@@ -80,6 +82,14 @@ Open the app by navigating to **[this](https://deluxe-trifle-050594.netlify.app/
 
    - to relocate events **press and hold** any from selected events and drop them in the respective date square.
 3. The drag and drop is available inside each calendar and in between calendars.
+
+## **Bugs**
+
+### Desktop browser in mobile view - not showing popover
+
+The popover should be triggered with a double click, but for mobile device view in the desktop browser, it is not working.
+
+It was tested on a physical mobile phone and the feature is working correctly.
 
 ## **Credits**
 
