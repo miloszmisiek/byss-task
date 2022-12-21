@@ -14,7 +14,7 @@ import {
   WeekRow,
   DayNames
 } from './styled';
-import { EventElement } from '../EventForm/styled';
+import { EventElement } from '../eventForm/styled';
 import EventWrapper from '../EventWrapper';
 import MyModal from '../myModal/MyModal';
 
