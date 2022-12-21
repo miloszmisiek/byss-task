@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { COLORS } from '../../const';
 
 export const EventWrapper = styled.div`
   border-radius: 8px;

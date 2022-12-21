@@ -62,6 +62,7 @@ function EventForm({ events, setEvents, edit, setEdit }) {
   };
   useEffect(() => {
     if (edit !== null) {
+      window.scrollTo(0, 0);
       events.find((ev) => ev.evId === edit);
       setEventData(events.find((ev) => ev.evId === edit));
     }
