@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
-import EventForm from './components/eventForm/EventForm';
+import EventForm from "./components/eventForm/EventForm"
 import { AppRow, AppWrapper } from './App.styled';
 import Calendar from './components/calendar/Calendar';
 import { CalendarsCol } from './components/calendar/styled';
