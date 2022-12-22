@@ -3,7 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { ModalBody, ModalEventTitle, ModalFooter, ModalHeader } from './styled';
 
-function MyModal({ show, setShow, event, deleteEvent, setShowPopover, selected }) {
+function MyModal({ show, setShow, deleteEvent, setShowPopover, selected }) {
   const [deleteItm, setDeleteItm] = useState({});
   // const deleteItm = selected.find((sel) => sel.idx === event.evId);
 
