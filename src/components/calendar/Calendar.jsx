@@ -201,7 +201,7 @@ function Calendar(props) {
                       setShow={setShow}
                       setShowPopover={setShowPopover}
                       deleteEvent={deleteEvent}
-                      event={events.find((ev) => ev.evId === ev.evId)}
+                      selected={selected}
                     />
                     <OverlayTrigger
                       trigger="focus"
