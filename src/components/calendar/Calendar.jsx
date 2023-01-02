@@ -179,8 +179,6 @@ function Calendar(props) {
             const nowString =
               d !== '' ? y + '-' + m.toString().padStart(2, '0') + '-' + d.toString().padStart(2, '0') : undefined;
             const evArr = events?.filter((ev) => ev.date === nowString && ev.id === id);
-            console.log(nowString);
-            console.log(evArr);
             return (
               <DayCol
                 onDragEnter={(e) => onDragEnter(nowString, e, id)}
