@@ -31,7 +31,9 @@ export const splitToWeeks = (now, monthDays) => {
       ? Array(day - 1)
           .fill('')
           .concat(monthDays)
-      : monthDays;
+      : Array(6)
+          .fill('')
+          .concat(monthDays);
 
   for (let i = 0; i < updatedDays.length; i += size) {
     if (updatedDays.slice(i, i + size).length < size) {
