@@ -53,8 +53,10 @@ function EventForm({ events, setEvents, edit, setEdit }) {
   const handleSubmit = (e) => {
     const form = e.currentTarget;
     e.preventDefault();
+    console.log(eventData);
 
     if (form.checkValidity() === false) {
+      console.log("validation");
       e.stopPropagation();
     }
     setValidated(true);
