@@ -16,11 +16,6 @@ export const range = (start, end, step = 1) => {
   return output;
 };
 
-export const sortWeekDays = (date) => {
-  const day = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
-  return [...weekDays.slice(day - 1), ...weekDays.slice(0, day - 1)];
-};
-
 export const splitToWeeks = (now, monthDays) => {
   const day = new Date(now.getFullYear(), now.getMonth(), 1).getDay();
   let arrays = [];
