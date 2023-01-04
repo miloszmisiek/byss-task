@@ -37,7 +37,7 @@ export const DayCol = styled(Col)`
   margin-left: 1px;
   outline: ${(props) => (props.day ? '1px solid black' : 'undefined')};
   background-color: ${(props) => (props.day ? 'white' : 'undefined')};
-  overflow-y: scroll;
+  overflow-y: auto;
   font-size: 0.7rem;
   text-align: left;
 
