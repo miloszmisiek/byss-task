@@ -25,7 +25,6 @@ function EventForm({ events, setEvents, edit, setEdit }) {
   };
   const [eventData, setEventData] = useState(initialState);
   const { title, date, description, color } = eventData;
-  const [validated, setValidated] = useState(false);
   const updateEvent = () => {
     setEvents((current) =>
       current.map((obj) => {
@@ -51,13 +50,7 @@ function EventForm({ events, setEvents, edit, setEdit }) {
     });
   };
   const handleSubmit = (e) => {
-    const form = e.currentTarget;
     e.preventDefault();
-
-    if (form.checkValidity() === false) {
-      e.stopPropagation();
-    }
-    setValidated(true);
     edit === null
       ? setEvents([...events, { ...eventData, id: 0, evId: events.length }])
       : updateEvent();
